@@ -10,7 +10,19 @@
 #end
 
 defmodule City do
-  defstruct name: "San Framcisco", state: "CA"
+  defstruct name: "San Francisco", state: "CA"
+end
+
+defmodule IdC do
+  defstruct [:num]
+end
+
+defmodule StrC do
+  defstruct [:str]
+end
+
+defmodule LamC do
+  defstruct [:args, :body]
 end
 
 defmodule Main do
