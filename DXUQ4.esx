@@ -1,9 +1,0 @@
-defmodule M do
-	def main do
-		IO.puts "magic"
-	end
-end
-
-M.main
-
-# newCHANGE
