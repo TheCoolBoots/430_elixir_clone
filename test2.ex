@@ -159,6 +159,7 @@ defmodule M do
           true -> %AppC{body: parse(first), args: Enum.map(rest, fn (arg) -> parse(arg) end)}
         end
       end
+      true -> raise "invalid syntax error"
     end
   end
 
