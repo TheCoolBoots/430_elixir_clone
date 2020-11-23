@@ -134,9 +134,9 @@ defmodule M do
 		end
 	end
 	
-	def top_interp(input) do
-		serialize(interp(parse(input), top_env))
-	end
+#	def top_interp(input) do
+#		serialize(interp(parse(input), top_env))
+#	end
 
 	def main() do
 		testId = %IdC{id: :+}
@@ -144,6 +144,9 @@ defmodule M do
 		b = %NumV{val: 3}
 		testAppC = %AppC{body: testId, args: [a, b]}
 		init_interp(testAppC)
+		IO.puts "HERE"
+		init_interp(%AppC{body: %IdC{id: :*}, args: [a, b]})
+		IO.puts "END"
 	end
 
 end
@@ -151,15 +154,58 @@ end
 
 M.main()
 
-# anonFunc = fn () -> IO.puts "passed function" end
-# def main() do
-# 	test1 = %StrV{val: "magic"}
-# 	IO.puts(test1.val)
-# 	test(M.anonFunc)
-# end
-# newCHANGE
-
-
-# def test(func) do
-# 	func.()
-# end
+ExUnit.start()
+defmodule TestCases do
+  use ExUnit.Case
+  use ExUnit.Case, async: true
+  import M
+  test "the truth" do
+    assert 1 + 1 == 2
+  end
+  test "add nums" do
+    testId = %IdC{id: :+}
+		a = %NumV{val: 1}
+		b = %NumV{val: 1}
+    testAppC = %AppC{body: testId, args: [a, b]}
+    assert init_interp(testAppC) == 2
+  end
+  test "sub nums" do
+    testId = %IdC{id: :-}
+		a = %NumV{val: 1}
+		b = %NumV{val: 1}
+    testAppC = %AppC{body: testId, args: [a, b]}
+    assert init_interp(testAppC) == 0
+  end
+  test "mult nums" do
+    testId = %IdC{id: :*}
+		a = %NumV{val: 1}
+		b = %NumV{val: 1}
+    testAppC = %AppC{body: testId, args: [a, b]}
+    assert init_interp(testAppC) == 1
+  end
+  test "div nums" do
+    testId = %IdC{id: :/}
+		a = %NumV{val: 1}
+		b = %NumV{val: 1}
+    testAppC = %AppC{body: testId, args: [a, b]}
+    assert init_interp(testAppC) == 1
+  end
+  test "equal vals" do
+    testId = %IdC{id: :equal?}
+		a = %NumV{val: 1}
+		b = %NumV{val: 1}
+    testAppC = %AppC{body: testId, args: [a, b]}
+    assert init_interp(testAppC) == true
+  end
+  test "leq vals" do
+    testId = %IdC{id: :<=}
+		a = %NumV{val: 1}
+		b = %NumV{val: 1}
+    testAppC = %AppC{body: testId, args: [a, b]}
+    assert init_interp(testAppC) == true
+  end
+  #Serialize tests
+  test "serialize num" do
+	assert serialize(%NumV{val: 2}) == "2"
+  end
+end
