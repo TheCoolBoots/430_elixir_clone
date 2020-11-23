@@ -118,6 +118,19 @@ defmodule M do
 		end
 	end
 
+	def serialize(expr) do
+		cond do
+			(expr.__struct__ == NumV) -> IO.puts expr.val
+			(expr.__struct__ == StrV) -> IO.puts expr.val
+			(expr.__struct__ == BoolV) -> cond do
+											(expr.val) -> IO.puts "True"
+											true -> IO.puts "False"
+										end
+			(expr.__struct__ == PrimV) -> IO.puts "#<primop>"
+			(expr.__struct__ == CloV) -> IO.puts "#<procedure>"
+		end
+	end
+
 	def main() do
 		testId = %IdC{id: :+}
 		a = %NumV{val: 1}
