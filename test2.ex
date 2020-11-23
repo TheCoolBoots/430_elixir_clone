@@ -2,6 +2,10 @@ defmodule IdC do
   defstruct [:id]
 end
 
+defmodule IfC do
+  defstruct [:test, :then, :else]
+end
+
 defmodule AppC do
 	defstruct [:body, :args]
 end
@@ -132,7 +136,40 @@ defmodule M do
 			(expr.__struct__ == PrimV) -> IO.puts "#<primop>"
 			(expr.__struct__ == CloV) -> IO.puts "#<procedure>"
 		end
-	end
+  end
+
+  def parse(l) do
+    #IO.puts(l)
+    keywords = [:let, :in, :if, :fn]
+    cond do
+      is_integer(l) -> %NumV{val: l}
+      is_atom(l) -> cond do
+        Enum.member?(keywords, l) -> raise "Unable to use keyword as id"
+        true -> %IdC{id: l}
+      end
+      is_binary(l) -> %StrV{val: l}
+      is_list(l) -> [first | rest] = l
+
+      cond do
+        length(l) == 1 -> %AppC{body: parse(first), args: []}
+        true -> cond do
+          first == :if -> %IfC{test: parse(Enum.at(rest, 0)), then: parse(Enum.at(rest, 1)), else: parse(Enum.at(rest, 2))}
+          first == :fn -> %LamC{body: parse(Enum.at(rest, 1)), params: Enum.map(Enum.at(rest, 0), fn (arg) -> parse(arg) end)}
+          first == :let && Enum.at(rest, length(rest) - 2) == :in -> parse_let(l)
+          true -> %AppC{body: parse(first), args: Enum.map(rest, fn (arg) -> parse(arg) end)}
+        end
+      end
+    end
+  end
+
+  def parse_let(l) do
+    test = [:let, [:x, := ,1], [:y, :=, 2], :in, [:+, :x, :y]]
+    body = Enum.at(l, length(l) - 1)
+    args = Enum.map(Enum.slice(l, 1..length(l)-3), fn (arg) -> Enum.at(arg, 0) end)
+    vals = Enum.map(Enum.slice(l, 1..length(l)-3), fn (arg) -> Enum.at(arg, 2) end)
+    %AppC{body: parse([:fn, args, body]), args: Enum.map(vals, fn (arg) -> parse(arg) end)}
+
+  end
 
 #	def top_interp(input) do
 #		serialize(interp(parse(input), top_env))
@@ -144,9 +181,13 @@ defmodule M do
 		b = %NumV{val: 3}
 		testAppC = %AppC{body: testId, args: [a, b]}
 		init_interp(testAppC)
-		IO.puts "HERE"
-		init_interp(%AppC{body: %IdC{id: :*}, args: [a, b]})
-		IO.puts "END"
+    init_interp(%AppC{body: %IdC{id: :*}, args: [a, b]})
+    testParse = parse(1)
+    #IO.puts(testParse.val)
+    test = [:let, [:x, := ,1], [:y, :=, 2], :in, [:+, :x, :y]]
+    testParse = parse(test)
+    t = testParse.body.params
+    IO.puts(Enum.at(t, 0).id)
 	end
 
 end
@@ -204,7 +245,7 @@ defmodule TestCases do
     assert init_interp(testAppC).val == true
   end
   #Serialize tests
-  test "serialize num" do
-	assert serialize(%NumV{val: 2}) == "2"
-  end
+  #test "serialize num" do
+	#assert serialize(%NumV{val: 2}) == "2"
+  #end
 end
