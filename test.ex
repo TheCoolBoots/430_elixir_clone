@@ -9,27 +9,44 @@
 #  end
 #end
 
-defmodule City do
-  defstruct name: "San Francisco", state: "CA"
+#defmodule City do
+#  defstruct name: "San Francisco", state: "CA"
+#end
+
+#defmodule IdC do
+#  defstruct [:num]
+#end
+
+#defmodule StrC do
+#  defstruct [:str]
+#end
+
+#defmodule LamC do
+#  defstruct [:args, :body]
+#end
+
+#defmodule Main do
+#  def main do
+#    test = %City{}
+#    IO.puts(test.name)
+#  end
+#end
+
+#Main.main
+defmodule DoMath do
+  def add(x, y), do: x + y
+  def subtract(x, y), do: x - y
 end
 
-defmodule IdC do
-  defstruct [:num]
-end
-
-defmodule StrC do
-  defstruct [:str]
-end
-
-defmodule LamC do
-  defstruct [:args, :body]
-end
-
-defmodule Main do
-  def main do
-    test = %City{}
-    IO.puts(test.name)
+ExUnit.start()
+defmodule  MyTest do
+  use ExUnit.Case
+  use ExUnit.Case, async: true
+  import DoMath
+  test "the truth" do
+    assert 1 + 1 == 2
+  end
+  test "help" do
+    assert add(1, 2) == 3
   end
 end
-
-Main.main
