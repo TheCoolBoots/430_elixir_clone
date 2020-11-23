@@ -64,6 +64,8 @@ defmodule M do
 	end
 
 	def init_interp(ast) do
+		bindTrue = {:true, true}
+		bindFalse = {:false, false}
 		bindAdd = {:+,  fn (a, b) ->
 											cond do
 												(a.__struct__ == NumV && b.__struct__ == NumV) -> %NumV{val: (a.val + b.val)}
@@ -102,7 +104,8 @@ defmodule M do
 												true -> %BoolV{val: false}
 											end
 										end}
-		top_env = [bindAdd, bindSub, bindMult, bindDiv, bindLeq, bindEqual]
+		bindError = {:error, fn (a) -> "ERROR: #{a}" end}
+		top_env = [bindTrue, bindFalse, bindAdd, bindSub, bindMult, bindDiv, bindLeq, bindEqual, bindError]
 
 		# IO.puts lookup_env(top_env, :+)
 
@@ -129,6 +132,10 @@ defmodule M do
 			(expr.__struct__ == PrimV) -> IO.puts "#<primop>"
 			(expr.__struct__ == CloV) -> IO.puts "#<procedure>"
 		end
+	end
+	
+	def top_interp(input) do
+		serialize(interp(parse(input), top_env))
 	end
 
 	def main() do

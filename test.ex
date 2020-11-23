@@ -9,5 +9,6 @@ end
 defmodule Main do
   test = %Test{}
   IO.puts test.val
+  IO.puts "hello #{test.val}"
   Test.test()
 end
