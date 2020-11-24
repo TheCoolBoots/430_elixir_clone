@@ -32,6 +32,44 @@
 #  end
 #end
 
+defmodule ExprC do
+  defmodule NumC do
+    defstruct [:num]
+  end
+
+  defmodule IdC do
+    defstruct [:id]
+  end
+
+  defmodule StrC do
+    defstruct [:str]
+  end
+
+  defmodule IfC do
+    defstruct [:test, :then, :else]
+  end
+
+  defmodule LamC do
+    defstruct [:args, :body]
+  end
+
+  defmodule AppC do
+    defstruct [:func, :args]
+  end
+
+  defmodule IfC do
+    defstruct [:test, :then, :else]
+  end
+end
+
+IO.puts(%IdC{id: :a})
+
+defmodule ParseIt do
+  def parse(sexp) do
+
+  end
+end
+
 #Main.main
 defmodule DoMath do
   def add(x, y), do: x + y
@@ -49,4 +87,5 @@ defmodule  MyTest do
   test "help" do
     assert add(1, 2) == 3
   end
+
 end
